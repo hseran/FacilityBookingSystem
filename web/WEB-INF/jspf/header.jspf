@@ -14,7 +14,7 @@
     List<Facility> facilities = (List<Facility>)application.getAttribute("facilities");
     
     Customer loggedInUser = (Customer)session.getAttribute("customer");
-    
+    String errorMessage = (String)session.getAttribute("errorMessage");    
     String rightCorner = "&nbsp;&nbsp;&nbsp;Welcome Guest &nbsp;&nbsp;&nbsp;";
    
     if (loggedInUser != null)
@@ -123,4 +123,10 @@
           </div><!--/.nav-collapse -->
         </div>
       </div>
+        <% if (errorMessage != null && !errorMessage.isEmpty()){
+        %>
+        <p class ="text-center" style="color:red"><strong><%= errorMessage%></strong></p>
+        <%
+        }
+        %>
     </div>	

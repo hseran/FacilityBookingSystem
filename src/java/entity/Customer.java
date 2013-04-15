@@ -39,7 +39,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Customer.findByCity", query = "SELECT c FROM Customer c WHERE c.city = :city"),
     @NamedQuery(name = "Customer.findByProvince", query = "SELECT c FROM Customer c WHERE c.province = :province"),
     @NamedQuery(name = "Customer.findByCountry", query = "SELECT c FROM Customer c WHERE c.country = :country"),
-    @NamedQuery(name = "Customer.findByPostalCode", query = "SELECT c FROM Customer c WHERE c.postalCode = :postalCode")})
+    @NamedQuery(name = "Customer.findByPostalCode", query = "SELECT c FROM Customer c WHERE c.postalCode = :postalCode"),
+    @NamedQuery(name = "Customer.findByLoginAndPassword", query = "SELECT c FROM Customer c WHERE c.username = :login AND c.password = :password")})
 public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

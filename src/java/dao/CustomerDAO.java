@@ -29,4 +29,7 @@ public interface CustomerDAO {
 
     int count();
     
+    Customer authenticateUser(String login, String password);    
+    
+    boolean isLoginIDAvailable(String login);
 }

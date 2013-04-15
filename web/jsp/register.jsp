@@ -1,6 +1,6 @@
 <%-- 
     Document   : register
-    Created on : 13 Mar, 2013, 8:48:18 PM
+    Created on : 13 Apr, 2013, 8:48:18 PM
     Author     : naresh
 --%>
 
@@ -8,7 +8,7 @@
 <div class="container-fluid">
     
     <span id="message_register" align ="center"> </span>
-        <form action="register" method="POST" id="signupform" class="form-horizontal" onsubmit="return validateLogin()">
+        <form action="register" method="POST" id="signupform" class="form-horizontal" onsubmit="return validateLogin();">
         <fieldset>
           <legend>Register Here</legend>
             <div class="control-group">

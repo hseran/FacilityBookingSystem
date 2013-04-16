@@ -5,10 +5,12 @@
           <div class="hero-unit">
             <h1>NTU Sports Facility Booking System</h1>
             <p> Just Play. Have Fun  </p>
+            
             <%
               /*
                * If user is not logged in, he might be a registered user, so 
                * display link to register
+               * 
                */
               if (loggedInUser == null)
               {

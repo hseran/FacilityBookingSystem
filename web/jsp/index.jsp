@@ -6,7 +6,8 @@
             <div class="hero-unit">
             <h1>NTU Sports</h1>
             <p> Just Play. Have Fun  </p>
-            
+            <br/>
+            <br/>
             <%
               /*
                * If user is not logged in, he might be a registered user, so 
@@ -20,6 +21,8 @@
             <%
               }
               %>
+            <br/>
+            <br/>
           </div>
           </div>
             <%
@@ -36,6 +39,7 @@
                   <li class="" data-slide-to="0" data-target="#myCarousel"></li>
                   <li data-slide-to="1" data-target="#myCarousel" class="active"></li>
                   <li data-slide-to="2" data-target="#myCarousel" class=""></li>
+                  <li data-slide-to="3" data-target="#myCarousel" class=""></li>
                 </ol>
                 <div class="carousel-inner">
                   <div class="item">

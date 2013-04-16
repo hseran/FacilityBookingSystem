@@ -34,6 +34,11 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "Booking.findByBookingFrom", query = "SELECT b FROM Booking b WHERE b.bookingFrom = :bookingFrom"),
     @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo")})
 public class Booking implements Serializable {
+    @Column(name = "is_cancelled")
+    private Boolean isCancelled;
+    @Column(name = "cancellation_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cancellationDate;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -147,6 +152,22 @@ public class Booking implements Serializable {
     @Override
     public String toString() {
         return "entity.Booking[ id=" + id + " ]";
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Date getCancellationDate() {
+        return cancellationDate;
+    }
+
+    public void setCancellationDate(Date cancellationDate) {
+        this.cancellationDate = cancellationDate;
     }
     
 }

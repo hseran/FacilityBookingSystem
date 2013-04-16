@@ -19,7 +19,7 @@
    
     if (loggedInUser != null)
     {
-         rightCorner = "&nbsp;&nbsp;&nbsp;Logged in as <a href='account' class='navbar-link'>" + loggedInUser.getName() + "</a>";
+         rightCorner = "&nbsp;&nbsp;&nbsp;Logged in as <a href='account' class='navbar-link'>" + loggedInUser.getUsername() + "</a>";
          rightCorner += "&nbsp;&nbsp;&nbsp;<a href='logout' class='navbar-link'>Sign out</a>";
     }
 %>

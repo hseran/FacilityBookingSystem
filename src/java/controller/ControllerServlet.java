@@ -9,7 +9,6 @@ import dao.CustomerDAO;
 import dao.FacilityDAO;
 import entity.Customer;
 import entity.Facility;
-import entity.FacilityInstances;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -34,6 +33,9 @@ import javax.servlet.http.HttpSession;
             "/register",
             "/login",
             "/logout",
+            "/account",
+            "/editProfile",
+            "/contact"
             /*"/book", 
             "/view", 
             "/user-profile", 

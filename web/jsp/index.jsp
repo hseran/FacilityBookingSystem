@@ -1,9 +1,10 @@
 <%@include file="../WEB-INF/jspf/header.jspf"%>
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span8">
-          <div class="hero-unit">
-            <h1>NTU Sports Facility Booking System</h1>
+        <div class="span7">
+                      
+            <div class="hero-unit">
+            <h1>NTU Sports</h1>
             <p> Just Play. Have Fun  </p>
             
             <%
@@ -29,28 +30,42 @@
               if (loggedInUser == null)
               {
             %>
-          <div class="span4">
-            <form style="margin: 0px" accept-charset="UTF-8" action="login" method="post">
-         <fieldset>
-          <legend>Login Here</legend>
-            <div class="control-group">
-              <label class="control-label" for="login">Login</label>
-              <div class="controls">
-                <input type="text" class="input-xlarge required" name="login" id="login">
+          <div class="span5">
+            <div class="carousel slide" id="myCarousel">
+                <ol class="carousel-indicators">
+                  <li class="" data-slide-to="0" data-target="#myCarousel"></li>
+                  <li data-slide-to="1" data-target="#myCarousel" class="active"></li>
+                  <li data-slide-to="2" data-target="#myCarousel" class=""></li>
+                </ol>
+                <div class="carousel-inner">
+                  <div class="item">
+                      <img height="500" width="600" alt="" src="img/table-tennis.jpg">
+                    <div class="carousel-caption">
+                      <h4>WTTF approved Table-Tennis boards</h4>
+                    </div>
+                  </div>
+                  <div class="item active">
+                    <img height="500" width="600" alt="" src="img/badminton.JPG">
+                    <div class="carousel-caption">
+                      <h4>Indoor Badminton courts</h4>
+                    </div>
+                  </div>
+                <div class="item">
+                    <img height="500" width="600" alt="" src="img/squash.jpeg">
+                    <div class="carousel-caption">
+                      <h4>Squash courts</h4>
+                    </div>
+                  </div>
+                <div class="item">
+                    <img height="500" width="600" alt="" src="img/lawn-tennis.jpg">
+                    <div class="carousel-caption">
+                      <h4>Outdoor grass Tennis courts</h4>
+                    </div>
+                  </div>
+                </div>
+                <a data-slide="prev" href="#myCarousel" class="left carousel-control">&lsaquo;</a>
+                <a data-slide="next" href="#myCarousel" class="right carousel-control">&rsaquo;</a>
               </div>
-            </div>
-           <div class="control-group">
-              <label class="control-label" for="password">Password</label>
-              <div class="controls">
-                <input type="password" class="input-xlarge required" name="password" id="password">
-              </div>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary btn-large">Submit</button>
-              <button type="reset" class="btn">Cancel</button>
-            </div>
-
-           </form>
           </div> <!--/row-->
                         <%}%>
         </div><!--/span-->

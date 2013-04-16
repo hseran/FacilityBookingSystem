@@ -29,12 +29,12 @@
             </div>
         <div class="span9">
         <form action="editProfile" method="POST" id="profile" class="form-horizontal">
-        <fieldset>
+            <fieldset>
           <legend>Account Details</legend>
             <div class="control-group">
               <label class="control-label" for="login">Login</label>
               <div class="controls">
-                    <%=loggedInUser.getLogin() %>
+                    <%=loggedInUser.getUsername() %>
               </div>
             </div>
            <div class="control-group">

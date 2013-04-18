@@ -17,38 +17,6 @@ USE `booking_system`;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Table structure for table `booking`
---
-
-DROP TABLE IF EXISTS `booking`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `booking` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_id` int(11) NOT NULL,
-  `facility_instance_id` int(11) NOT NULL,
-  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `booking_from` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `booking_to` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `is_cancelled` bit(1) DEFAULT b'0',
-  `cancellation_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `customer_id_idx` (`customer_id`),
-  KEY `facility_instance_id_idx` (`facility_instance_id`),
-  CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `facility_instance_id` FOREIGN KEY (`facility_instance_id`) REFERENCES `facility_instances` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `booking`
---
-
-LOCK TABLES `booking` WRITE;
-/*!40000 ALTER TABLE `booking` DISABLE KEYS */;
-/*!40000 ALTER TABLE `booking` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `customer`
@@ -134,6 +102,39 @@ LOCK TABLES `facility_instances` WRITE;
 /*!40000 ALTER TABLE `facility_instances` DISABLE KEYS */;
 INSERT INTO `facility_instances` VALUES (1,1,'Court 1'),(2,1,'Court 2'),(3,1,'Court 3'),(4,1,'Court 4'),(5,2,'Court 1'),(6,2,'Court 2'),(7,2,'Court 3'),(8,2,'Court 4'),(9,3,'Court 1'),(10,3,'Court 2'),(11,3,'Court 3'),(12,3,'Court 4'),(13,4,'Table 1'),(14,4,'Table 2'),(15,4,'Table 3'),(16,4,'Table 4');
 /*!40000 ALTER TABLE `facility_instances` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `booking`
+--
+
+DROP TABLE IF EXISTS `booking`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `booking` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) NOT NULL,
+  `facility_instance_id` int(11) NOT NULL,
+  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `booking_from` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `booking_to` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `is_cancelled` bit(1) DEFAULT b'0',
+  `cancellation_date` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `customer_id_idx` (`customer_id`),
+  KEY `facility_instance_id_idx` (`facility_instance_id`),
+  CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `facility_instance_id` FOREIGN KEY (`facility_instance_id`) REFERENCES `facility_instances` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `booking`
+--
+
+LOCK TABLES `booking` WRITE;
+/*!40000 ALTER TABLE `booking` DISABLE KEYS */;
+/*!40000 ALTER TABLE `booking` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

@@ -3,8 +3,7 @@
 <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Actions</li>
-              <li class=""><a href="editProfile">Edit Profile</a></li>
-              <li><a href="current-bookings">My Current Bookings</a></li>
-              <li><a href="past-bookings">My Past Bookings</a></li>
+              <li class=""><a href="admin-unresolved-query">View UnResolved Queries</a></li>
+              <li><a href="admin-resolved-query">View Resolved Queries</a></li>
             </ul>
 </div><!--/.well -->

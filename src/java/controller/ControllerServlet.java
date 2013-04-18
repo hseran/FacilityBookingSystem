@@ -7,10 +7,13 @@ package controller;
 import dao.BookingDAO;
 import dao.CustomerDAO;
 import dao.FacilityDAO;
+import dao.UserQueryDAO;
 import entity.Customer;
 import entity.Facility;
+import entity.UserQuery;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -35,11 +38,14 @@ import javax.servlet.http.HttpSession;
             "/logout",
             "/account",
             "/editProfile",
-            "/contact"
+            "/contact",
+            "/current-bookings",
+            "/past-bookings",
+            "/submit-query"
             /*"/book", 
             "/view", 
             "/user-profile", 
-            "/user-bookings", 
+            "/current-bookings", 
             "/cancel-booking"*/})
 public class ControllerServlet extends HttpServlet {
     
@@ -52,6 +58,8 @@ public class ControllerServlet extends HttpServlet {
     @EJB
     FacilityDAO facilityDAO;
     
+    @EJB
+    UserQueryDAO userQueryDAO;
     
     @Override
     public void init() throws ServletException {
@@ -116,7 +124,18 @@ public class ControllerServlet extends HttpServlet {
             response.sendRedirect("index");
             return;
         }
-        
+        else if (userPath.equals("/current-bookings")){
+            /*
+             * clear the session variable & redirect to index.jsp
+             */
+            if (loggedInUser == null)
+            {
+                response.sendRedirect("index");
+                return;
+            }
+            request.setAttribute("bookings", 
+                    bookingDAO.getCurrentBookings(loggedInUser.getId()));
+        }
         // use RequestDispatcher to forward request
        String url =  "jsp" + userPath + ".jsp";
        System.out.println(url);
@@ -252,6 +271,29 @@ public class ControllerServlet extends HttpServlet {
             PrintWriter writer = response.getWriter();
             writer.print(available);
             return;
+        }
+        else if (userPath.equals("/submit-query"))
+        {
+            String name = request.getParameter("name");
+            String phone = request.getParameter("phone");
+            String email = request.getParameter("email");
+            String query = request.getParameter("query");
+            String message = "Your Query has been submitted. We will get in touch with you shortly";
+            UserQuery uQuery = new UserQuery(-1, name, email, query, false, new Date());
+            uQuery.setPhone(phone);
+            System.out.println(name + " " + phone + " " + email + " " + query);
+            
+            try
+            {
+                userQueryDAO.create(uQuery);
+            }
+            catch (Exception ex)
+            {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+                message = "Error submitting your Query. Please try again.";
+            }
+            request.setAttribute("updateMessage", message);
+            userPath = "/contact";
         }
         
         // use RequestDispatcher to forward request

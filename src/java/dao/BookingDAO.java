@@ -29,4 +29,7 @@ public interface BookingDAO {
 
     int count();
     
+    List<Booking> getCurrentBookings(int customerId);
+    
+    List<Booking> getPastBookings(int customerId);
 }

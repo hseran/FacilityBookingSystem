@@ -32,7 +32,11 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "Booking.findById", query = "SELECT b FROM Booking b WHERE b.id = :id"),
     @NamedQuery(name = "Booking.findByCreatedDate", query = "SELECT b FROM Booking b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Booking.findByBookingFrom", query = "SELECT b FROM Booking b WHERE b.bookingFrom = :bookingFrom"),
-    @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo")})
+    @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo"),
+    @NamedQuery(name = "Booking.findCurrentBookings", 
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND (b.bookingFrom >= :currentDate OR b.bookingTo >= :currentDate) ORDER BY b.bookingFrom DESC"),
+    @NamedQuery(name = "Booking.findPastBookings", 
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingTo < :currentDate")})
 public class Booking implements Serializable {
     @Column(name = "is_cancelled")
     private Boolean isCancelled;

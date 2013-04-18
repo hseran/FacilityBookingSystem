@@ -20,46 +20,50 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author naresh
+ * @author blue
  */
 @Entity
 @Table(name = "booking")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Booking.findAll", query = "SELECT b FROM Booking b"),
     @NamedQuery(name = "Booking.findById", query = "SELECT b FROM Booking b WHERE b.id = :id"),
     @NamedQuery(name = "Booking.findByCreatedDate", query = "SELECT b FROM Booking b WHERE b.createdDate = :createdDate"),
+    @NamedQuery(name = "Booking.findByBookingDate", query = "SELECT b FROM Booking b WHERE b.bookingDate = :bookingDate"),
     @NamedQuery(name = "Booking.findByBookingFrom", query = "SELECT b FROM Booking b WHERE b.bookingFrom = :bookingFrom"),
-    @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo")})
+    @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo"),
+    @NamedQuery(name = "Booking.findByIsCancelled", query = "SELECT b FROM Booking b WHERE b.isCancelled = :isCancelled"),
+    @NamedQuery(name = "Booking.findByCreatedDateAndFacilityId", query = "SELECT b FROM Booking b INNER JOIN b.facilityInstanceId f WHERE b.createdDate = :createdDate AND f.id = :id"),
+    @NamedQuery(name = "Booking.findByCancellationDate", query = "SELECT b FROM Booking b WHERE b.cancellationDate = :cancellationDate")})
 public class Booking implements Serializable {
-    @Column(name = "is_cancelled")
-    private Boolean isCancelled;
-    @Column(name = "cancellation_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date cancellationDate;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
+    @Size(max = 50)
     @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private String createdDate;
     @Basic(optional = false)
     @NotNull
+    @Column(name = "booking_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date bookingDate;
     @Column(name = "booking_from")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date bookingFrom;
-    @Basic(optional = false)
-    @NotNull
+    private Integer bookingFrom;
     @Column(name = "booking_to")
+    private Integer bookingTo;
+    @Column(name = "is_cancelled")
+    private Boolean isCancelled;
+    @Column(name = "cancellation_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date bookingTo;
+    private Date cancellationDate;
     @JoinColumn(name = "facility_instance_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private FacilityInstances facilityInstanceId;
@@ -74,11 +78,9 @@ public class Booking implements Serializable {
         this.id = id;
     }
 
-    public Booking(Integer id, Date createdDate, Date bookingFrom, Date bookingTo) {
+    public Booking(Integer id, Date bookingDate) {
         this.id = id;
-        this.createdDate = createdDate;
-        this.bookingFrom = bookingFrom;
-        this.bookingTo = bookingTo;
+        this.bookingDate = bookingDate;
     }
 
     public Integer getId() {
@@ -89,28 +91,52 @@ public class Booking implements Serializable {
         this.id = id;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getBookingFrom() {
+    public Date getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(Date bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public Integer getBookingFrom() {
         return bookingFrom;
     }
 
-    public void setBookingFrom(Date bookingFrom) {
+    public void setBookingFrom(Integer bookingFrom) {
         this.bookingFrom = bookingFrom;
     }
 
-    public Date getBookingTo() {
+    public Integer getBookingTo() {
         return bookingTo;
     }
 
-    public void setBookingTo(Date bookingTo) {
+    public void setBookingTo(Integer bookingTo) {
         this.bookingTo = bookingTo;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Date getCancellationDate() {
+        return cancellationDate;
+    }
+
+    public void setCancellationDate(Date cancellationDate) {
+        this.cancellationDate = cancellationDate;
     }
 
     public FacilityInstances getFacilityInstanceId() {
@@ -152,22 +178,6 @@ public class Booking implements Serializable {
     @Override
     public String toString() {
         return "entity.Booking[ id=" + id + " ]";
-    }
-
-    public Boolean getIsCancelled() {
-        return isCancelled;
-    }
-
-    public void setIsCancelled(Boolean isCancelled) {
-        this.isCancelled = isCancelled;
-    }
-
-    public Date getCancellationDate() {
-        return cancellationDate;
-    }
-
-    public void setCancellationDate(Date cancellationDate) {
-        this.cancellationDate = cancellationDate;
     }
     
 }

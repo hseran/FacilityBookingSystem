@@ -5,9 +5,11 @@
 package dao;
 
 import entity.Booking;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -25,6 +27,16 @@ public class BookingDAOImpl extends AbstractDAO<Booking> implements BookingDAO {
 
     public BookingDAOImpl() {
         super(Booking.class);
+    }
+        @Override
+    public Object getBookingByDate(String date, int facilityId) {
+
+        Query query = null;
+        query = em.createNamedQuery("Booking.findByCreatedDateAndFacilityId");
+        query.setParameter("createdDate", date);
+        query.setParameter("id", facilityId);
+        List obj = query.getResultList();
+        return obj;
     }
     
 }

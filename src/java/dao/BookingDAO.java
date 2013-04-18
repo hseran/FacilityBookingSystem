@@ -29,4 +29,6 @@ public interface BookingDAO {
 
     int count();
     
+    Object getBookingByDate(String date, int facilityId);
+    
 }

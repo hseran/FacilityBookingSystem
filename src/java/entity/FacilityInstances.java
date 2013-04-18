@@ -5,10 +5,9 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,15 +36,13 @@ public class FacilityInstances implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 45)
-    @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "facilityInstanceId")
-    private Set<Booking> bookingSet;
+    private List<Booking> bookingList;
     @JoinColumn(name = "facility_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Facility facilityId;
@@ -78,12 +75,12 @@ public class FacilityInstances implements Serializable {
         this.name = name;
     }
 
-    public Set<Booking> getBookingSet() {
-        return bookingSet;
+    public List<Booking> getBookingList() {
+        return bookingList;
     }
 
-    public void setBookingSet(Set<Booking> bookingSet) {
-        this.bookingSet = bookingSet;
+    public void setBookingList(List<Booking> bookingList) {
+        this.bookingList = bookingList;
     }
 
     public Facility getFacilityId() {

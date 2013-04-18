@@ -5,10 +5,9 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,7 +23,6 @@ import javax.validation.constraints.Size;
  * @author naresh
  */
 @Entity
-@Table(name = "facility")
 @NamedQueries({
     @NamedQuery(name = "Facility.findAll", query = "SELECT f FROM Facility f"),
     @NamedQuery(name = "Facility.findById", query = "SELECT f FROM Facility f WHERE f.id = :id"),
@@ -35,15 +32,13 @@ public class Facility implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 45)
-    @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "facilityId")
-    private Set<FacilityInstances> facilityInstancesSet;
+    private List<FacilityInstances> facilityInstancesList;
 
     public Facility() {
     }
@@ -73,12 +68,12 @@ public class Facility implements Serializable {
         this.name = name;
     }
 
-    public Set<FacilityInstances> getFacilityInstancesSet() {
-        return facilityInstancesSet;
+    public List<FacilityInstances> getFacilityInstancesList() {
+        return facilityInstancesList;
     }
 
-    public void setFacilityInstancesSet(Set<FacilityInstances> facilityInstancesSet) {
-        this.facilityInstancesSet = facilityInstancesSet;
+    public void setFacilityInstancesList(List<FacilityInstances> facilityInstancesList) {
+        this.facilityInstancesList = facilityInstancesList;
     }
 
     @Override

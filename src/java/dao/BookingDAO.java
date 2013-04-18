@@ -5,6 +5,7 @@
 package dao;
 
 import entity.Booking;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -30,6 +31,8 @@ public interface BookingDAO {
     int count();
     
     List<Booking> getCurrentBookings(int customerId);
+    
+    List<Booking> getBookingByDate(Date date, int facilityId);
     
     List<Booking> getPastBookings(int customerId);
 }

@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -26,28 +25,25 @@ import javax.validation.constraints.NotNull;
  * @author naresh
  */
 @Entity
-@Table(name = "booking")
 @NamedQueries({
     @NamedQuery(name = "Booking.findAll", query = "SELECT b FROM Booking b"),
     @NamedQuery(name = "Booking.findById", query = "SELECT b FROM Booking b WHERE b.id = :id"),
     @NamedQuery(name = "Booking.findByCreatedDate", query = "SELECT b FROM Booking b WHERE b.createdDate = :createdDate"),
+    @NamedQuery(name = "Booking.findByBookingDate", query = "SELECT b FROM Booking b WHERE b.bookingDate = :bookingDate"),
     @NamedQuery(name = "Booking.findByBookingFrom", query = "SELECT b FROM Booking b WHERE b.bookingFrom = :bookingFrom"),
     @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo"),
+    @NamedQuery(name = "Booking.findByIsCancelled", query = "SELECT b FROM Booking b WHERE b.isCancelled = :isCancelled"),
+    @NamedQuery(name = "Booking.findByBookingDateAndFacilityId", query = "SELECT b FROM Booking b INNER JOIN b.facilityInstanceId f WHERE b.bookingDate = :bookingDate AND f.id = :id"),
+    @NamedQuery(name = "Booking.findByCancellationDate", query = "SELECT b FROM Booking b WHERE b.cancellationDate = :cancellationDate"),
     @NamedQuery(name = "Booking.findCurrentBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND (b.bookingFrom >= :currentDate OR b.bookingTo >= :currentDate) ORDER BY b.bookingFrom DESC"),
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate >= :currentDate ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
     @NamedQuery(name = "Booking.findPastBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingTo < :currentDate")})
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate < :currentDate ORDER BY b.bookingDate DESC, b.bookingFrom DESC")})
 public class Booking implements Serializable {
-    @Column(name = "is_cancelled")
-    private Boolean isCancelled;
-    @Column(name = "cancellation_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date cancellationDate;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
     @NotNull
@@ -57,13 +53,21 @@ public class Booking implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "booking_from")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date bookingFrom;
+    private int bookingFrom;
     @Basic(optional = false)
     @NotNull
     @Column(name = "booking_to")
+    private int bookingTo;
+    @Column(name = "is_cancelled")
+    private Boolean isCancelled;
+    @Column(name = "cancellation_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date bookingTo;
+    private Date cancellationDate;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "booking_date")
+    @Temporal(TemporalType.DATE)
+    private Date bookingDate;
     @JoinColumn(name = "facility_instance_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private FacilityInstances facilityInstanceId;
@@ -78,11 +82,12 @@ public class Booking implements Serializable {
         this.id = id;
     }
 
-    public Booking(Integer id, Date createdDate, Date bookingFrom, Date bookingTo) {
+    public Booking(Integer id, Date createdDate, int bookingFrom, int bookingTo, Date bookingDate) {
         this.id = id;
         this.createdDate = createdDate;
         this.bookingFrom = bookingFrom;
         this.bookingTo = bookingTo;
+        this.bookingDate = bookingDate;
     }
 
     public Integer getId() {
@@ -101,20 +106,44 @@ public class Booking implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public Date getBookingFrom() {
+    public int getBookingFrom() {
         return bookingFrom;
     }
 
-    public void setBookingFrom(Date bookingFrom) {
+    public void setBookingFrom(int bookingFrom) {
         this.bookingFrom = bookingFrom;
     }
 
-    public Date getBookingTo() {
+    public int getBookingTo() {
         return bookingTo;
     }
 
-    public void setBookingTo(Date bookingTo) {
+    public void setBookingTo(int bookingTo) {
         this.bookingTo = bookingTo;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Date getCancellationDate() {
+        return cancellationDate;
+    }
+
+    public void setCancellationDate(Date cancellationDate) {
+        this.cancellationDate = cancellationDate;
+    }
+
+    public Date getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(Date bookingDate) {
+        this.bookingDate = bookingDate;
     }
 
     public FacilityInstances getFacilityInstanceId() {
@@ -156,22 +185,6 @@ public class Booking implements Serializable {
     @Override
     public String toString() {
         return "entity.Booking[ id=" + id + " ]";
-    }
-
-    public Boolean getIsCancelled() {
-        return isCancelled;
-    }
-
-    public void setIsCancelled(Boolean isCancelled) {
-        this.isCancelled = isCancelled;
-    }
-
-    public Date getCancellationDate() {
-        return cancellationDate;
-    }
-
-    public void setCancellationDate(Date cancellationDate) {
-        this.cancellationDate = cancellationDate;
     }
     
 }

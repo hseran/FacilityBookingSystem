@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -29,14 +30,23 @@ public class BookingDAOImpl extends AbstractDAO<Booking> implements BookingDAO {
     public BookingDAOImpl() {
         super(Booking.class);
     }
-
+    @Override
+    public List<Booking> getBookingByDate(Date date, int facilityId) {
+        Query query = null;
+        query = em.createNamedQuery("Booking.findByBookingDateAndFacilityId");
+        query.setParameter("bookingDate", date, TemporalType.DATE);
+        query.setParameter("id", facilityId);
+        List obj = query.getResultList();
+        return obj;
+    }
     @Override
     public List<Booking> getCurrentBookings(int customerId) {
         Query query = null;
         query = em.createNamedQuery("Booking.findCurrentBookings");
         query.setParameter("customerId", customerId);
-        query.setParameter("currentDate", new Date());
-        List obj = query.getResultList();        
+        query.setParameter("currentDate", new Date(), TemporalType.DATE);
+        List obj = query.getResultList(); 
+        System.out.println(obj.size());
         return (List<Booking>)obj;
     }
 
@@ -45,7 +55,7 @@ public class BookingDAOImpl extends AbstractDAO<Booking> implements BookingDAO {
         Query query = null;
         query = em.createNamedQuery("Booking.findPastBookings");
         query.setParameter("customerId", customerId);
-        query.setParameter("currentDate", new Date());
+        query.setParameter("currentDate", new Date(), TemporalType.DATE);
         List obj = query.getResultList();        
         return (List<Booking>)obj;
     }

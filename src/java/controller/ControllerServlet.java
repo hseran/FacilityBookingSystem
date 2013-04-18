@@ -7,13 +7,19 @@ package controller;
 import dao.BookingDAO;
 import dao.CustomerDAO;
 import dao.FacilityDAO;
+import dao.FacilityInstancesDAO;
 import dao.UserQueryDAO;
+import entity.Booking;
 import entity.Customer;
 import entity.Facility;
+import entity.FacilityInstances;
 import entity.UserQuery;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -28,39 +34,41 @@ import javax.servlet.http.HttpSession;
  *
  * @author naresh
  */
-@WebServlet(name = "ControllerServlet", 
+@WebServlet(name = "ControllerServlet",
         urlPatterns = {
-            "/index", 
-            "/facility",
-            "/checkIDAvailabilty",
-            "/register",
-            "/login",
-            "/logout",
-            "/account",
-            "/editProfile",
+    "/index",
+    "/facility",
+    "/checkIDAvailabilty",
+    "/register",
+    "/login",
+    "/logout",
+    "/account",
+    "/editProfile",
             "/contact",
             "/current-bookings",
+    "/view",
+    "/book",
             "/past-bookings",
             "/submit-query"
-            /*"/book", 
-            "/view", 
-            "/user-profile", 
-            "/current-bookings", 
-            "/cancel-booking"*/})
+/*"/book", 
+ "/view", 
+ "/user-profile", 
+ "/user-bookings", 
+ "/cancel-booking"*/
+})
 public class ControllerServlet extends HttpServlet {
-    
-    @EJB 
-    CustomerDAO customerDAO;
-    
+
     @EJB
-    BookingDAO bookingDAO;    
-    
+    CustomerDAO customerDAO;
+    @EJB
+    BookingDAO bookingDAO;
     @EJB
     FacilityDAO facilityDAO;
-    
+    @EJB
+    FacilityInstancesDAO facilityInstancesDAO;
     @EJB
     UserQueryDAO userQueryDAO;
-    
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -69,8 +77,7 @@ public class ControllerServlet extends HttpServlet {
         getServletContext().setAttribute("facilities", facilityDAO.findAll());
     }
 
-    
-   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP
      * <code>GET</code> method.
@@ -87,36 +94,32 @@ public class ControllerServlet extends HttpServlet {
         HttpSession session = request.getSession();
         System.out.println(" in get " + userPath);
         Customer loggedInUser = (Customer) session.getAttribute("customer");
-        
-        if (userPath.equals("index")){
+
+        if (userPath.equals("index")) {
             //do nothing
-        }
-        // if category page is requested
+        } // if category page is requested
         else if (userPath.equals("/facility")) {
 
             // get categoryId from request
             String facilityId = request.getQueryString();
             if (facilityId != null && !facilityId.isEmpty()) {
                 // get selected facility
-                Facility selectedFacility = 
+                Facility selectedFacility =
                         facilityDAO.find(Integer.parseInt(facilityId));
                 // place selected category in session scope
                 session.setAttribute("selectedFacility", selectedFacility);
             }
-        }
-        else if (userPath.equals("/register")) {
+        } else if (userPath.equals("/register")) {
             /*
              * just redirect user to register.jsp
              */
-        }
-        else if (userPath.equals("/login")){
+        } else if (userPath.equals("/login")) {
             /*
              * Just redirect user to index
              */
             response.sendRedirect("index");
             return;
-        }
-        else if (userPath.equals("/logout")){
+        } else if (userPath.equals("/logout")) {
             /*
              * clear the session variable & redirect to index.jsp
              */
@@ -137,17 +140,14 @@ public class ControllerServlet extends HttpServlet {
                     bookingDAO.getCurrentBookings(loggedInUser.getId()));
         }
         // use RequestDispatcher to forward request
-       String url =  "jsp" + userPath + ".jsp";
-       System.out.println(url);
-        try 
-        {
+        String url = "jsp" + userPath + ".jsp";
+        System.out.println(url);
+        try {
             request.getRequestDispatcher(url).forward(request, response);
-        } 
-        catch (Exception ex) 
-        {
+        } catch (Exception ex) {
             Logger.getLogger(ControllerServlet.class.getName()).log(
                     Level.SEVERE, null, ex);
-        }        
+        }
 
     }
 
@@ -163,42 +163,175 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                //processRequest(request, response);
-        String userPath = request.getServletPath();        
-        
+        //processRequest(request, response);
+        String userPath = request.getServletPath();
+
         HttpSession session = request.getSession();
-        Customer loggedInUser = (Customer)session.getAttribute("customer");
-        
+        Customer loggedInUser = (Customer) session.getAttribute("customer");
+
         if (userPath.equals("/register")) {
             Customer newCustomer = readCustomerFromRegisterRequest(request);
             customerDAO.create(newCustomer);
             /*
              * direct user to login after registration
              */
-            
+
             session.setAttribute("customer", newCustomer);
-            
+
             /*
              * if user was forced to register while going to some other page,
              * direct him to that page after he registers
              */
-            String path = (String)(session.getAttribute("page") == null? "": session.getAttribute("page"));
+            String path = (String) (session.getAttribute("page") == null ? "" : session.getAttribute("page"));
             path = request.getContextPath() + path;
-            
-            if (path != null  && !path.isEmpty())
-            {
+
+            if (path != null && !path.isEmpty()) {
                 session.removeAttribute("page");
                 response.sendRedirect(path);
                 return;
-            }
-            else
-            {
+            } else {
                 response.sendRedirect("index.jsp");
                 return;
             }
+
+        } else if (userPath.equals("/view")) {
+
+            List<Booking> l = null;
+            String date = request.getParameter("datepicker");
+            session.setAttribute("selectdate", date);
             
-        }
-        else if (userPath.equals("/login")){
+            String fid = request.getParameter("fid");
+            int facid = Integer.parseInt(fid);
+            /*
+             * Facility Id 
+             *  0 - Badminton
+             *  1 - Squash
+             *  2 - Table tennis 
+             *  3 - Lawn tennis
+             */
+            Facility selFacility = (Facility) session.getAttribute("selectedFacility");
+
+            /*
+             * Determine the instance id that the user is trying to book 
+             */
+            //int facility_instance_id = getIdFromMap(facid, facilityId);
+            session.setAttribute("facility_instance_id", facid);
+
+            String[] status = new String[]{"Available", "Available", "Available", "Available", "Available",
+                "Available", "Available", "Available", "Available", "Available", "Available"};
+            
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy"); 
+            Date convertedDate = null;
+            try 
+            { 
+                convertedDate = dateFormat.parse(date);
+            } 
+            catch (ParseException ex) 
+            {
+                Logger.getLogger(ControllerServlet.class.getName()).log(
+                        Level.SEVERE, null, ex);
+                throw new ServletException("Incorrect Date Format");
+            }
+
+            
+            try {
+                l = bookingDAO.getBookingByDate(convertedDate, facid);
+            } catch (Exception e) {
+                System.out.println("Exception seen " + e.getMessage());
+            }
+            
+            if (l != null) {
+                for (Booking b : l)
+                {
+                    int startTime = b.getBookingFrom();
+                    if (startTime == 8) {
+                        status[0] = "Unavailable";
+                    } else if (startTime == 9) {
+                        status[1] = "Unavailable";
+                    } else if (startTime == 10) {
+                        status[2] = "Unavailable";
+                    } else if (startTime == 11) {
+                        status[3] = "Unavailable";
+                    } else if (startTime == 12) {
+                        status[4] = "Unavailable";
+                    } else if (startTime == 1) {
+                        status[5] = "Unavilable";
+                    } else if (startTime == 2) {
+                        status[6] = "Unavailable";
+                    } else if (startTime == 3) {
+                        status[7] = "Unavailable";
+                    } else if (startTime == 4) {
+                        status[8] = "Unavailable";
+                    } else if (startTime == 5) {
+                        status[9] = "Unavailable";
+                    } else if (startTime == 6) {
+                        status[10] = "Unavailable";
+                    }
+                }
+            }
+            session.setAttribute("bookmap", status);
+        } else if (userPath.equals("/book")) {
+            
+            if (loggedInUser == null)
+            {
+                response.sendRedirect("index");
+                return;
+            }
+            
+            String val, selddate;
+            int value, facility_instance_id;
+
+
+            facility_instance_id = (Integer) session.getAttribute("facility_instance_id");
+            selddate = (String) session.getAttribute("selectdate");
+            String[] checkedIds = request.getParameterValues("slot");
+
+            FacilityInstances f = facilityInstancesDAO.find(facility_instance_id);
+
+            Booking b = new Booking();
+            b.setCustomerId(loggedInUser);
+            b.setFacilityInstanceId(f);
+            b.setCreatedDate(new Date());
+            b.setIsCancelled(Boolean.FALSE);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy"); 
+            Date convertedDate = null;
+            try 
+            { 
+                convertedDate = dateFormat.parse(selddate);
+            } 
+            catch (ParseException ex) 
+            {
+                Logger.getLogger(ControllerServlet.class.getName()).log(
+                        Level.SEVERE, null, ex);
+                throw new ServletException("Incorrect Date Format");
+            }
+            
+            b.setBookingDate(convertedDate);
+
+            for (int i = 0; i < checkedIds.length; i++) {
+                val = checkedIds[i];
+                value = Integer.parseInt(val);
+                if (value < 5) {
+
+                    b.setBookingFrom(value + 8);
+                    b.setBookingTo(value + 9);
+                    try {
+                        bookingDAO.create(b);
+                    } catch (Exception e) {
+                        System.out.println("Exception seen " + e.getMessage());
+                    }
+                } else if (value >= 5) {
+
+                    b.setBookingFrom(value - 4);
+                    b.setBookingTo(value - 3);
+                    try {
+                        bookingDAO.create(b);
+                    } catch (Exception e) {
+                        System.out.println("Exception seen " + e.getMessage());
+                    }
+                }
+            }
+        } else if (userPath.equals("/login")) {
             /*
              * check user details and set session
              */
@@ -207,60 +340,46 @@ public class ControllerServlet extends HttpServlet {
              * if login is successful update ussBean with current customer
              * else set error message that login failed
              */
-            if (customer != null)
-            {
+            if (customer != null) {
                 session.setAttribute("customer", customer);
-            }
-            else
-            {
+            } else {
                 session.setAttribute("errorMessage", "Login Failed");
             }
-            
+
             /*
              * if user was forced to login while going to some other page,
              * direct him to that page after he logs in
              */
-            String path = (String)(session.getAttribute("page") == null? "": session.getAttribute("page"));
+            String path = (String) (session.getAttribute("page") == null ? "" : session.getAttribute("page"));
             path = request.getContextPath() + path;
-            
-            if (path != null  && !path.isEmpty())
-            {
+
+            if (path != null && !path.isEmpty()) {
                 session.removeAttribute("page");
                 response.sendRedirect(path);
                 return;
-            }
-            else
-            {
+            } else {
                 response.sendRedirect("index.jsp");
                 return;
             }
-        }
-        else if (userPath.equals("/editProfile"))
-        {
+        } else if (userPath.equals("/editProfile")) {
             /*
              * If user is not logged-in yet, re-direct to index page 
              */
-            if (loggedInUser == null)
-            {
+            if (loggedInUser == null) {
                 session.setAttribute("page", userPath);
-                session.setAttribute("errorMessage", 
+                session.setAttribute("errorMessage",
                         "Please login to edit your Account details");
                 response.sendRedirect("index.jsp");
                 return;
             }
             readCustomerFromEditProfileRequest(request, loggedInUser);
-            try
-            {
+            try {
                 customerDAO.edit(loggedInUser);
                 request.setAttribute("updateMessage", "Details Updated Successfully");
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        else if (userPath.equals("/checkIDAvailablility"))
-        {
+        } else if (userPath.equals("/checkIDAvailablility")) {
             /*
              * we check is the login ID is already in use by someone else
              */
@@ -295,29 +414,25 @@ public class ControllerServlet extends HttpServlet {
             request.setAttribute("updateMessage", message);
             userPath = "/contact";
         }
-        
+
         // use RequestDispatcher to forward request
         String url = "jsp" + userPath + ".jsp";
 
-        try 
-        {
+        try {
             request.getRequestDispatcher(url).forward(request, response);
-        } 
-        catch (Exception ex) 
-        {
+        } catch (Exception ex) {
             Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         return;
     }
 
-    
-        /**
+    /**
      * Reads customer details submitted from edit profile
+     *
      * @param request
-     * @return 
+     * @return
      */
-    private void readCustomerFromEditProfileRequest(HttpServletRequest request, Customer customer)
-    {
+    private void readCustomerFromEditProfileRequest(HttpServletRequest request, Customer customer) {
         String password = request.getParameter("password");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -328,7 +443,7 @@ public class ControllerServlet extends HttpServlet {
         String province = request.getParameter("province");
         String country = request.getParameter("country");
         String postalCode = request.getParameter("postalcode");
-        
+
         /*
          * update object with values read from edit form
          */
@@ -341,24 +456,23 @@ public class ControllerServlet extends HttpServlet {
         customer.setCity(city);
         customer.setProvince(province);
         customer.setCountry(country);
-        customer.setPostalCode(postalCode);        
+        customer.setPostalCode(postalCode);
     }
-    
-    private Customer authenticate(HttpServletRequest request)
-    {
+
+    private Customer authenticate(HttpServletRequest request) {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         return customerDAO.authenticateUser(login, password);
     }
-    
+
     /**
-     * This method extracts customer details from the incoming request and 
+     * This method extracts customer details from the incoming request and
      * returns a newly instantiated Customer object
+     *
      * @param request
-     * @return 
+     * @return
      */
-    private Customer readCustomerFromRegisterRequest(HttpServletRequest request)
-    {
+    private Customer readCustomerFromRegisterRequest(HttpServletRequest request) {
         String login = request.getParameter("reg_login");
         String password = request.getParameter("reg_password");
         String name = request.getParameter("name");
@@ -370,13 +484,13 @@ public class ControllerServlet extends HttpServlet {
         String province = request.getParameter("province");
         String country = request.getParameter("country");
         String postalCode = request.getParameter("postalcode");
-        
-        Customer user = new Customer(-1, login, password, name, email, phone, address1, 
+
+        Customer user = new Customer(-1, login, password, name, email, phone, address1,
                 city, province, country, postalCode);
         user.setAddressLine2(address2);
         return user;
     }
-    
+
     /**
      * Returns a short description of the servlet.
      *
@@ -386,4 +500,41 @@ public class ControllerServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private int getIdFromMap(int facid, int facilityId) {
+
+        if (facilityId == 1 && facid == 1) {
+            return 1;
+        } else if (facilityId == 1 && facid == 2) {
+            return 2;
+        } else if (facilityId == 1 && facid == 3) {
+            return 3;
+        } else if (facilityId == 1 && facid == 4) {
+            return 4;
+        } else if (facilityId == 2 && facid == 1) {
+            return 5;
+        } else if (facilityId == 2 && facid == 2) {
+            return 6;
+        } else if (facilityId == 2 && facid == 3) {
+            return 7;
+        } else if (facilityId == 2 && facid == 4) {
+            return 8;
+        } else if (facilityId == 3 && facid == 1) {
+            return 9;
+        } else if (facilityId == 3 && facid == 2) {
+            return 10;
+        } else if (facilityId == 3 && facid == 3) {
+            return 11;
+        } else if (facilityId == 3 && facid == 4) {
+            return 12;
+        } else if (facilityId == 4 && facid == 1) {
+            return 13;
+        } else if (facilityId == 4 && facid == 2) {
+            return 14;
+        } else if (facilityId == 4 && facid == 3) {
+            return 15;
+        } else {
+            return 16;
+        }
+    }
 }

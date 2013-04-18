@@ -13,7 +13,7 @@
             <div class ="span3">
                 <%@include file="../WEB-INF/jspf/account-side-bar.jspf"%>
             </div>
-            <div class ="span9">
+            <div class ="span7">
 <%
     List<Booking> bookings = (List<Booking>)request.getAttribute("bookings");
     if (bookings == null || bookings.size() == 0)
@@ -27,12 +27,12 @@
 %>
 <table class="table table-bordered table-hover">
 		  <thead>
-			  <tr>
+                      <tr>
 				<th>Facility</th>
                                 <th>Date Booked On</th>
 				<th>Date Booked For</th>
                                 <th>From - To</th>
-				<th>Status</th>
+				<th>Action</th>
 			  </tr>
 			</thead>
 			<tbody>
@@ -42,19 +42,12 @@
         {
 %>
 <tr>
-    <td>Table Tennis - 1</td>
-    <td>2013-04-17</td>
-    <td>2013-04-19</td>
-    <td>10:00 to 11:00</td>
-    <td>CANCELLED</td>
-</tr>
-<tr>
     <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + booking.getFacilityInstanceId().getName() %></td>
-    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate()) %></td>
-    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingFrom()) %></td>
-    <td><%= new SimpleDateFormat("HH:mm").format(booking.getBookingFrom()) + " to " 
-            + new SimpleDateFormat("HH:mm").format(booking.getBookingTo())%></td>
-    <td><%= booking.getIsCancelled()?"CANCELLED":"<a href='cancel-booking?id='" + booking.getId() + ">" %></td>
+    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
+    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
+    <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>
+    <%System.out.println("4");%>
+    <td><%= booking.getIsCancelled()?"CANCELLED":"<a title='Cancel Booking' href='cancel-booking?id=" + booking.getId() + "'><i class='icon-trash'> </i></a>" %></td>
 </tr>
 
 <%
@@ -66,6 +59,7 @@
     }
 %>
         </div>
+        <div class="span2"></div>
     </div>
 </div>
 <%@include file="../WEB-INF/jspf/footer.jspf"%>

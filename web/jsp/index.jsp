@@ -1,5 +1,22 @@
 <%@include file="../WEB-INF/jspf/header.jspf"%>
-    <div class="container-fluid">
+<head>
+    <style type="text/css">
+        #back {background-image:url('img/SportsBackground.jpg');-moz-background-size: 100% 100%;
+            -o-background-size: 100% 100%;
+            -webkit-background-size: 100% 100%;
+            background-size: 100% 100%;
+            -moz-border-image: url(scale.jpg) 0;}
+    </style>
+    <!--[if lt IE 9]>
+    <style type="text/css">
+    #back{
+          background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='img/SportsBackground.jpg', sizingMethod='scale');
+
+    }
+    </style>
+    <![endif]-->
+</head>
+    <div class="container-fluid" id="back">
       <div class="row-fluid">
         <div class="span7">
                       
@@ -33,7 +50,7 @@
               if (loggedInUser == null)
               {
             %>
-          <div class="span5">
+          <div class="span4">
             <div class="carousel slide" id="myCarousel">
                 <ol class="carousel-indicators">
                   <li class="" data-slide-to="0" data-target="#myCarousel"></li>
@@ -43,25 +60,25 @@
                 </ol>
                 <div class="carousel-inner">
                   <div class="item">
-                      <img height="500" width="600" alt="" src="img/table-tennis.jpg">
+                      <img height="500" width="700" alt="" src="img/table-tennis.jpg">
                     <div class="carousel-caption">
                       <h4>WTTF approved Table-Tennis boards</h4>
                     </div>
                   </div>
                   <div class="item active">
-                    <img height="500" width="600" alt="" src="img/badminton.JPG">
+                    <img height="500" width="700" alt="" src="img/badminton.JPG">
                     <div class="carousel-caption">
                       <h4>Indoor Badminton courts</h4>
                     </div>
                   </div>
                 <div class="item">
-                    <img height="500" width="600" alt="" src="img/squash.jpeg">
+                    <img height="500" width="700" alt="" src="img/squash.jpeg">
                     <div class="carousel-caption">
                       <h4>Squash courts</h4>
                     </div>
                   </div>
                 <div class="item">
-                    <img height="500" width="600" alt="" src="img/lawn-tennis.jpg">
+                    <img height="500" width="700" alt="" src="img/lawn-tennis.jpg">
                     <div class="carousel-caption">
                       <h4>Outdoor grass Tennis courts</h4>
                     </div>

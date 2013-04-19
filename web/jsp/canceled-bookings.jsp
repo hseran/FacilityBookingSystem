@@ -13,13 +13,13 @@
             <div class ="span3">
                 <%@include file="../WEB-INF/jspf/account-side-bar.jspf"%>
             </div>
-            <div class ="span7 booking-data">
+            <div class ="span7">
 <%
     List<Booking> bookings = (List<Booking>)request.getAttribute("bookings");
     if (bookings == null || bookings.size() == 0)
     {
 %>
-<h2>You have do not have any Current Bookings</h2>
+<h2>You have do not have any Past Bookings</h2>
 <%
     }
     else
@@ -32,7 +32,7 @@
                                 <th>Date Booked On</th>
 				<th>Date Booked For</th>
                                 <th>From - To</th>
-				<th>Action</th>
+				<th>Status</th>
 			  </tr>
 			</thead>
 			<tbody>
@@ -41,13 +41,12 @@
         for (Booking booking : bookings)
         {
 %>
-<tr class="booking">
+<tr>
     <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + booking.getFacilityInstanceId().getName() %></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
     <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>
-    <%System.out.println("4");%>
-    <td><%= booking.getIsCancelled()?"CANCELLED":"<a id='booking_" + booking.getId() + "' class='cancel' title='Cancel Booking'><i class='icon-trash'> </i></a>" %></td>
+    <td><%= booking.getIsCancelled()?"CANCELLED":"-" %></td>
 </tr>
 
 <%
@@ -62,28 +61,4 @@
         <div class="span2"></div>
     </div>
 </div>
-
-    <script type="text/javascript">
-    $(document).ready(function(){
-        $("a.cancel").click(cancelBooking);
-        }); 
-        
-    function cancelBooking(event)
-    {
-        var $that = $(this).closest('tr');        
-        var booking_id_val = $.trim($(this).attr('id'));
-        booking_id_val = booking_id_val.replace("booking_", "");
-        $.post("cancel-booking", {booking_id:booking_id_val})
-        .done (function(data){
-            parent = $that.parent();
-            $that.remove();
-            if (parent.find('tr').length == 0)
-            {
-                parent.closest('div.booking-data').html("<h2>You have do not have any Current Bookings</h2>")
-            }
-        });
-    }
-            
-    </script>
-
 <%@include file="../WEB-INF/jspf/footer.jspf"%>

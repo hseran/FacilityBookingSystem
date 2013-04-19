@@ -35,4 +35,6 @@ public interface BookingDAO {
     List<Booking> getBookingByDate(Date date, int facilityId);
     
     List<Booking> getPastBookings(int customerId);
+
+    List<Booking> getCanceledBookings(int customerId);
 }

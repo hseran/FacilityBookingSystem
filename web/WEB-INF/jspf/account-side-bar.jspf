@@ -6,5 +6,6 @@
               <li class=""><a href="editProfile">Edit Profile</a></li>
               <li><a href="current-bookings">My Current Bookings</a></li>
               <li><a href="past-bookings">My Past Bookings</a></li>
+              <li><a href="canceled-bookings">My Canceled Bookings</a></li>
             </ul>
 </div><!--/.well -->

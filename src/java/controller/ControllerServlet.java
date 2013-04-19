@@ -44,17 +44,14 @@ import javax.servlet.http.HttpSession;
     "/logout",
     "/account",
     "/editProfile",
-            "/contact",
-            "/current-bookings",
+    "/contact",
+    "/current-bookings",
     "/view",
     "/book",
-            "/past-bookings",
-            "/submit-query"
-/*"/book", 
- "/view", 
- "/user-profile", 
- "/user-bookings", 
- "/cancel-booking"*/
+    "/past-bookings",
+    "/canceled-bookings",
+    "/submit-query",
+    "/cancel-booking"
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -139,6 +136,31 @@ public class ControllerServlet extends HttpServlet {
             request.setAttribute("bookings", 
                     bookingDAO.getCurrentBookings(loggedInUser.getId()));
         }
+        else if (userPath.equals("/past-bookings")){
+            /*
+             * clear the session variable & redirect to index.jsp
+             */
+            if (loggedInUser == null)
+            {
+                response.sendRedirect("index");
+                return;
+            }
+            request.setAttribute("bookings", 
+                    bookingDAO.getPastBookings(loggedInUser.getId()));
+        }
+        else if (userPath.equals("/canceled-bookings")){
+            /*
+             * clear the session variable & redirect to index.jsp
+             */
+            if (loggedInUser == null)
+            {
+                response.sendRedirect("index");
+                return;
+            }
+            request.setAttribute("bookings", 
+                    bookingDAO.getCanceledBookings(loggedInUser.getId()));
+        }
+
         // use RequestDispatcher to forward request
         String url = "jsp" + userPath + ".jsp";
         System.out.println(url);
@@ -194,11 +216,24 @@ public class ControllerServlet extends HttpServlet {
                 return;
             }
 
-        } else if (userPath.equals("/view")) {
+        }
+        else if (userPath.equals("/cancel-booking")) {
+            if (loggedInUser == null)
+            {
+                response.sendRedirect("index");
+                return;
+            }
+            
+            int bookingId = Integer.parseInt(request.getParameter("booking_id"));
+            Booking booking = bookingDAO.find(bookingId);
+            booking.setIsCancelled(Boolean.TRUE);
+            bookingDAO.edit(booking); 
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }else if (userPath.equals("/view")) {
 
             List<Booking> l = null;
             String date = request.getParameter("datepicker");
-            session.setAttribute("selectdate", date);
             
             String fid = request.getParameter("fid");
             int facid = Integer.parseInt(fid);
@@ -232,7 +267,9 @@ public class ControllerServlet extends HttpServlet {
                         Level.SEVERE, null, ex);
                 throw new ServletException("Incorrect Date Format");
             }
-
+            
+            session.setAttribute("isToday", isSameDay(convertedDate, new Date()));            
+            session.setAttribute("selectdate", convertedDate);
             
             try {
                 l = bookingDAO.getBookingByDate(convertedDate, facid);
@@ -283,7 +320,6 @@ public class ControllerServlet extends HttpServlet {
 
 
             facility_instance_id = (Integer) session.getAttribute("facility_instance_id");
-            selddate = (String) session.getAttribute("selectdate");
             String[] checkedIds = request.getParameterValues("slot");
 
             FacilityInstances f = facilityInstancesDAO.find(facility_instance_id);
@@ -293,19 +329,8 @@ public class ControllerServlet extends HttpServlet {
             b.setFacilityInstanceId(f);
             b.setCreatedDate(new Date());
             b.setIsCancelled(Boolean.FALSE);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy"); 
-            Date convertedDate = null;
-            try 
-            { 
-                convertedDate = dateFormat.parse(selddate);
-            } 
-            catch (ParseException ex) 
-            {
-                Logger.getLogger(ControllerServlet.class.getName()).log(
-                        Level.SEVERE, null, ex);
-                throw new ServletException("Incorrect Date Format");
-            }
             
+            Date convertedDate = (Date)session.getAttribute("selectdate");
             b.setBookingDate(convertedDate);
 
             for (int i = 0; i < checkedIds.length; i++) {
@@ -501,40 +526,10 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private int getIdFromMap(int facid, int facilityId) {
-
-        if (facilityId == 1 && facid == 1) {
-            return 1;
-        } else if (facilityId == 1 && facid == 2) {
-            return 2;
-        } else if (facilityId == 1 && facid == 3) {
-            return 3;
-        } else if (facilityId == 1 && facid == 4) {
-            return 4;
-        } else if (facilityId == 2 && facid == 1) {
-            return 5;
-        } else if (facilityId == 2 && facid == 2) {
-            return 6;
-        } else if (facilityId == 2 && facid == 3) {
-            return 7;
-        } else if (facilityId == 2 && facid == 4) {
-            return 8;
-        } else if (facilityId == 3 && facid == 1) {
-            return 9;
-        } else if (facilityId == 3 && facid == 2) {
-            return 10;
-        } else if (facilityId == 3 && facid == 3) {
-            return 11;
-        } else if (facilityId == 3 && facid == 4) {
-            return 12;
-        } else if (facilityId == 4 && facid == 1) {
-            return 13;
-        } else if (facilityId == 4 && facid == 2) {
-            return 14;
-        } else if (facilityId == 4 && facid == 3) {
-            return 15;
-        } else {
-            return 16;
-        }
+    private Object isSameDay(Date convertedDate, Date date) {
+        String date1Str = new SimpleDateFormat("MM/dd/yyyy").format(convertedDate);
+        String date2Str = new SimpleDateFormat("MM/dd/yyyy").format(date);
+        return date1Str.equals(date2Str);
     }
+
 }

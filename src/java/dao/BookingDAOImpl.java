@@ -59,5 +59,13 @@ public class BookingDAOImpl extends AbstractDAO<Booking> implements BookingDAO {
         List obj = query.getResultList();        
         return (List<Booking>)obj;
     }
-    
+
+    @Override
+    public List<Booking> getCanceledBookings(int customerId) {
+        Query query = null;
+        query = em.createNamedQuery("Booking.findMyCanceledBookings");
+        query.setParameter("customerId", customerId);
+        List obj = query.getResultList();        
+        return (List<Booking>)obj;
+    }
 }

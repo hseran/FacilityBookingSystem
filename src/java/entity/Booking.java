@@ -33,12 +33,14 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "Booking.findByBookingFrom", query = "SELECT b FROM Booking b WHERE b.bookingFrom = :bookingFrom"),
     @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo"),
     @NamedQuery(name = "Booking.findByIsCancelled", query = "SELECT b FROM Booking b WHERE b.isCancelled = :isCancelled"),
-    @NamedQuery(name = "Booking.findByBookingDateAndFacilityId", query = "SELECT b FROM Booking b INNER JOIN b.facilityInstanceId f WHERE b.bookingDate = :bookingDate AND f.id = :id"),
+    @NamedQuery(name = "Booking.findByBookingDateAndFacilityId", query = "SELECT b FROM Booking b INNER JOIN b.facilityInstanceId f WHERE b.bookingDate = :bookingDate AND f.id = :id AND b.isCancelled = FALSE"),
     @NamedQuery(name = "Booking.findByCancellationDate", query = "SELECT b FROM Booking b WHERE b.cancellationDate = :cancellationDate"),
     @NamedQuery(name = "Booking.findCurrentBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate >= :currentDate ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate >= :currentDate AND b.isCancelled = FALSE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
     @NamedQuery(name = "Booking.findPastBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate < :currentDate ORDER BY b.bookingDate DESC, b.bookingFrom DESC")})
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate < :currentDate AND b.isCancelled = FALSE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+    @NamedQuery(name = "Booking.findMyCanceledBookings", 
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.isCancelled = TRUE ORDER BY b.bookingDate DESC, b.bookingFrom DESC")})
 public class Booking implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -18,10 +18,10 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span1"></div>
-        <div class="span4">
+        <div class="span3">
         <h1><%=selFacility.getName() %></h1>
         
-        <form name="frmLogin" action="view" method="post" id="claim-form" >
+        <form name="frmLogin" id="view-form" >
             <fieldset>
             <div class="control-group">
               <label class="control-label" for="login">Select Court</label>
@@ -40,23 +40,40 @@
               </div>
             </div>
             <div class="form-actions">
-              <button type="submit" class="btn btn-primary btn-large">Check Availability</button>
+                <button type="button" class="btn btn-primary btn-large check-availability">Check Availability</button>
               <button type="reset" class="btn">Cancel</button>
             </div>
         </fieldset>
         </form>
     </div>
-    <div class="span7">
+    <div class="span5">
+         <div id="booking-table">
+         </div>
+    </div>
+    <div class="span2">
          <div id="booking-table">
          </div>
     </div>
     </div>
 </div>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $("#datepicker").datepicker({minDate:0, maxDate:6});
+<script type="text/javascript">
+        $(document).ready(function() {
+            $("#datepicker").datepicker({minDate:0, maxDate:6});
+            $(".check-availability").click(checkAvailability);
+            $("#view-form").validate();
+        });
+        
+        function checkAvailability()
+        {
+            var date = $.trim($("#datepicker").val());
+            var fac_ins_id = $.trim($("#fid").val());
+            $.post("view", {datepicker:date, fid:fac_ins_id})
+            .done (function(data){
+                $("#booking-table").html(data);
             });
-        </script>
+        }
+        
+</script>
 
                         
 <%@include file="../WEB-INF/jspf/footer.jspf"%>

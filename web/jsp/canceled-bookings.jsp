@@ -13,7 +13,7 @@
             <div class ="span3">
                 <%@include file="../WEB-INF/jspf/account-side-bar.jspf"%>
             </div>
-            <div class ="span7">
+            <div class ="span8">
 <%
     List<Booking> bookings = (List<Booking>)request.getAttribute("bookings");
     if (bookings == null || bookings.size() == 0)
@@ -45,10 +45,10 @@
 %>
 <tr>
     <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + " " + booking.getFacilityInstanceId().getName() %></td>
-    <td><%= new SimpleDateFormat("yyyy-MM-dd hh:mm a").format(booking.getCreatedDate())%></td>
+    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
     <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>
-    <td><%= new SimpleDateFormat("yyyy-MM-dd hh:mm a").format(booking.getCancellationDate())%></td>
+    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCancellationDate())%></td>
     <td><%= booking.getIsCancelled()?"CANCELLED":"-" %></td>
 </tr>
 
@@ -61,7 +61,6 @@
     }
 %>
         </div>
-        <div class="span2"></div>
     </div>
 </div>
 <%@include file="../WEB-INF/jspf/footer.jspf"%>

@@ -1,21 +1,4 @@
 <%@include file="../WEB-INF/jspf/header.jspf"%>
-<head>
-    <style type="text/css">
-        #back {background-image:url('img/SportsBackground.jpg');-moz-background-size: 100% 100%;
-            -o-background-size: 100% 100%;
-            -webkit-background-size: 100% 100%;
-            background-size: 100% 100%;
-            -moz-border-image: url(scale.jpg) 0;}
-    </style>
-    <!--[if lt IE 9]>
-    <style type="text/css">
-    #back{
-          background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='img/SportsBackground.jpg', sizingMethod='scale');
-
-    }
-    </style>
-    <![endif]-->
-</head>
     <div class="container-fluid" id="back">
       <div class="row-fluid">
         <div class="span7">
@@ -23,8 +6,6 @@
             <div class="hero-unit">
             <h1>NTU Sports</h1>
             <p> Just Play. Have Fun  </p>
-            <br/>
-            <br/>
             <%
               /*
                * If user is not logged in, he might be a registered user, so 
@@ -38,8 +19,7 @@
             <%
               }
               %>
-            <br/>
-            <br/>
+              <br/>
           </div>
           </div>
             <%

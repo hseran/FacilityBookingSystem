@@ -33,7 +33,6 @@
                                 <th>Date Booked On</th>
 				<th>Date Booked For</th>
                                 <th>From - To</th>
-				<th>Status</th>
 			  </tr>
 			</thead>
 			<tbody>
@@ -47,8 +46,6 @@
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
     <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>
-    <%System.out.println("4");%>
-    <td><%= booking.getIsCancelled()?"CANCELLED":"-" %></td>
 </tr>
 
 <%

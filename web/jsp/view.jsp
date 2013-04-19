@@ -38,22 +38,25 @@
                     boolean isToday = (Boolean)session.getAttribute("isToday");
                     Date date = new Date();
                     int hour = date.getHours();
+                    
                     for (int i = 0; i < status.length; i++) {
-                        if (isToday && (i + 8)<= hour)
+                        String color = "#ccffcc";
+                        if ((isToday && (i + 8)<= hour) || !status[i].equals("Available"))
                         {
+                            color = "#ff9999";
                             status[i] = "UnAvailable";
                         }
                 %>      
             <tr>
                 <td><%=arr[i]%></td>
-                <td><%=status[i]%></td>
+                <td style="background-color: <%=color%>"><%=status[i]%></td>
                 <%if (loggedInUser != null){%>
                 <%if (isToday && (i + 8) <= hour){%>
-                <td style="background-color: #ff9999"> <input class="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> disabled> UnAvailable </td>
+                <td style="background-color: <%=color%>"> <input class="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> disabled> UnAvailable </td>
                 <%} else if (status[i].equals("Available")) {%>
-                    <td style="background-color: #ccffcc"> <input class="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> > Book Slot </td>
+                <td style="background-color: <%=color%>"> <input class="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> > Book Slot </td>
                     <% } else {%>
-                <td style="background-color: #ff9999"><input class ="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> disabled >Unavailable</td>
+                <td style="background-color: <%=color%>"><input class ="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> disabled >Unavailable</td>
                     <%
                     }
                 }
@@ -66,7 +69,7 @@
         <%if (loggedInUser != null){%>
         <button type="button" class="btn btn-success btn-large make-booking" onclick="book();">Make booking </button>
         <%}else{%>
-        <h1>Please login to proceed to booking</h1>
+        <b>Please login to proceed to booking</b>
         <%}%>
     </form>
 </div>

@@ -4,74 +4,85 @@
     Author     : naresh
 --%>
 <%@include file="../WEB-INF/jspf/header.jspf"%>
+
+<%
+    Boolean registrationMessage = (Boolean)request.getAttribute("registrationMessage");
+%>
+
 <div class="container-fluid">
-    
-    <span id="message_register" align ="center"> </span>
+    <%
+    if (registrationMessage != null && registrationMessage == Boolean.TRUE)
+    {
+    %>
+    <span id="message_register" class="label label-success">Success!!</span>&nbsp; <span>Your Registration is Successful. Please Login. </span>
+    <%
+    }
+    %>
         <form action="register" method="POST" id="signupform" class="form-horizontal" onsubmit="return validateLogin();">
         <fieldset>
           <legend>Register Here</legend>
             <div class="control-group">
-              <label class="control-label" for="login">Login</label>
+              <label class="control-label" for="login">Login *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required" name="reg_login" id="reg_login">
               </div>
             </div>
            <div class="control-group">
-              <label class="control-label" for="password">Password</label>
+              <label class="control-label" for="password">Password *</label>
               <div class="controls">
                 <input type="password" class="input-xlarge required" name="reg_password" id="reg_password">
               </div>
             </div>
            <div class="control-group">
-              <label class="control-label" for="name">Name</label>
+              <label class="control-label" for="name">Name *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required" name="name" id="name">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="email">Email Address</label>
+              <label class="control-label" for="email">Email Address *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required email" name="email" id="email">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="phone">Phone</label>
+              <label class="control-label" for="phone">Phone *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required tel" name="phone" id="phone">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="address1">Address Line 1</label>
+              <label class="control-label" for="address1">Address Line 1 *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required" name="address1" id="address1">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="address2">Address Line 2</label>
+              <label class="control-label" for="address2">Address Line 2 *</label>
               <div class="controls">
-                <input type="text" class="input-xlarge" name="address2" id="address2">
+                <input type="text" class="input-xlarge required" name="address2" id="address2">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="city">City</label>
+              <label class="control-label" for="city">City *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required" name="city" id="city">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="province">Province</label>
+              <label class="control-label" for="province">Province *</label>
               <div class="controls">
-                <input type="text" class="input-xlarge" name="province" id="province">
+                <input type="text" class="input-xlarge required" name="province" id="province">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="country">Country</label>
+              <label class="control-label" for="country">Country *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required" name="country" id="country">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="postalcode">Postal Code</label>
+              <label class="control-label" for="postalcode">Postal Code *</label>
               <div class="controls">
                 <input type="text" class="input-xlarge required digits" name="postalcode" id="postalcode">
               </div>

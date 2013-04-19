@@ -64,6 +64,12 @@
         function checkAvailability()
         {
             var date = $.trim($("#datepicker").val());
+            
+            if (date === "")
+            {
+                alert("Please Select a Date to check Availablity");
+            }
+            
             var fac_ins_id = $.trim($("#fid").val());
             $.post("view", {datepicker:date, fid:fac_ins_id})
             .done (function(data){
@@ -73,7 +79,6 @@
 
         function book()
         {
-            alert("booking");
             var selectedVal = "";
             var selected = $("#slots-table input[type='radio']:checked");
             if (selected.length > 0)
@@ -87,6 +92,9 @@
             $.post("book", {slot:selectedValue})
             .done (function(data){
                 $("#booking-table").html(data);
+            }).error(function(xhr, status, error)
+            {
+                $("#booking-table").html("<span class='label label-important'>ERROR</span> <span style='color:red'>"+ xhr.responseText +"</span>");
             });
         }
 

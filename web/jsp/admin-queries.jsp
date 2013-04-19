@@ -4,6 +4,7 @@
     Author     : naresh
 --%>
 
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="entity.UserQuery"%>
 <%@include file="../WEB-INF/jspf/admin-header.jspf"%>
 
@@ -24,11 +25,11 @@
                 {
             %>
                     <div class="query">
-                        <small>Is Resolved?</small> <input class ="query_status" type="checkbox" <%= query.getIsResolved()? "CHECKED" : "" %> id = "status_<%= query.getId() %>"/>
-                        <div class="fo"> <small><span align ="left"> User: <em> <%= query.getUserName() + ", " + query.getEmail() %> </em></span>&nbsp;&nbsp;&nbsp;&nbsp;<span align ="right"> submitted on: <%= query.getSubmittedOn()%> </span></small></div>
+                        <small>Is Resolved?</small> <input class ="query_status" type="checkbox" <%= query.getIsResolved()? "CHECKED" : "" %> id = "status_<%=query.getId()%>"/>
+                        <div class="fo"> <small><span align ="left"> User: <em> <%= query.getUserName() + ", " + query.getEmail() %> </em></span>&nbsp;&nbsp;&nbsp;&nbsp;<span align ="right"> submitted on: <%= new SimpleDateFormat("yyyy-MM-dd").format(query.getSubmittedOn())%> </span></small></div>
                     <div><%= query.getQuery() %></div>
-                    </div>
                     <br/><br/>
+                    </div>
             <%
                 }
             %>
@@ -42,12 +43,13 @@
     
     function updateResolutionStatus(event)
     {
-        var id = $(this).attr("id");
+        var $that = $(this);
+        var id = $that.attr("id");
         id = id.replace("status_", "");
         var checked = $(this).is(":checked");
         $.post("updateQueryStatus", {queryId:id, resolved:checked})
-                .done (function(data){
-                    alert ("Updated Query Status");
+                .done (function(){
+                    $that.closest("div.query").remove();
         });
     }
     

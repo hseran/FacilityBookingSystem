@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "UserQuery.findByUserName", query = "SELECT u FROM UserQuery u WHERE u.userName = :userName"),
     @NamedQuery(name = "UserQuery.findByPhone", query = "SELECT u FROM UserQuery u WHERE u.phone = :phone"),
     @NamedQuery(name = "UserQuery.findByEmail", query = "SELECT u FROM UserQuery u WHERE u.email = :email"),
-    @NamedQuery(name = "UserQuery.findByIsResolved", query = "SELECT u FROM UserQuery u WHERE u.isResolved = :isResolved"),
+    @NamedQuery(name = "UserQuery.findByIsResolved", query = "SELECT u FROM UserQuery u WHERE u.isResolved = :isResolved ORDER BY u.submittedOn DESC"),
     @NamedQuery(name = "UserQuery.findBySubmittedOn", query = "SELECT u FROM UserQuery u WHERE u.submittedOn = :submittedOn"),
     @NamedQuery(name = "UserQuery.updateStatus", query = "UPDATE UserQuery u SET u.isResolved = :isResolved WHERE u.id = :id")})
 public class UserQuery implements Serializable {

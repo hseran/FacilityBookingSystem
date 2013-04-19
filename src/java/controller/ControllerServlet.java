@@ -210,24 +210,8 @@ public class ControllerServlet extends HttpServlet {
              * direct user to login after registration
              */
 
-            session.setAttribute("customer", newCustomer);
-
-            /*
-             * if user was forced to register while going to some other page,
-             * direct him to that page after he registers
-             */
-            String path = (String) (session.getAttribute("page") == null ? "" : session.getAttribute("page"));
-            path = request.getContextPath() + path;
-
-            if (path != null && !path.isEmpty()) {
-                session.removeAttribute("page");
-                response.sendRedirect(path);
-                return;
-            } else {
-                response.sendRedirect("index.jsp");
-                return;
-            }
-
+            //session.setAttribute("customer", newCustomer);
+            request.setAttribute("registrationMessage", true);
         }
         else if (userPath.equals("/cancel-booking")) {
             if (loggedInUser == null)
@@ -319,7 +303,6 @@ public class ControllerServlet extends HttpServlet {
                 return;
             }
             
-            String val, selddate;
             int value, facility_instance_id;
 
 
@@ -340,9 +323,34 @@ public class ControllerServlet extends HttpServlet {
             value = Integer.parseInt(checkedId);
             b.setBookingFrom(value);
             b.setBookingTo(value + 1);
+            
+            if (bookingDAO.checkMultipleFacilitiesAtSameTime(loggedInUser.getId(), value, convertedDate))
+            {
+                PrintWriter writer = response.getWriter();
+                writer.write("You already have another booking on " + new SimpleDateFormat("yyyy-MM-dd").format(convertedDate) + " from " + value + " Hrs to "  + (value + 1) + " Hrs");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+            
+            if (bookingDAO.checkIfUserReachedBookingLimit(loggedInUser.getId(), f.getFacilityId().getId(), convertedDate))
+            {
+                PrintWriter writer = response.getWriter();
+                writer.write("You have already reached booking limit for " + f.getFacilityId().getName() + " facility for the day " + new SimpleDateFormat("yyyy-MM-dd").format(convertedDate));
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+            
+            if (!bookingDAO.checkSlotAvailability(facility_instance_id, value, convertedDate))
+            {
+                PrintWriter writer = response.getWriter();
+                writer.write("Booking Slot not available. This can happen when some other user books the same slot you were trying to book. Please try again");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
             try {
-                bookingDAO.create(b);
-                request.setAttribute("booking", b);
+                    bookingDAO.create(b);
+                    request.setAttribute("booking", b);
+
             } catch (Exception e) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, e);
                 throw new ServletException(e);
@@ -413,22 +421,20 @@ public class ControllerServlet extends HttpServlet {
             String phone = request.getParameter("phone");
             String email = request.getParameter("email");
             String query = request.getParameter("query");
-            String message = "Your Query has been submitted. We will get in touch with you shortly";
             UserQuery uQuery = new UserQuery(-1, name, email, query, false, new Date());
             uQuery.setPhone(phone);
-            System.out.println(name + " " + phone + " " + email + " " + query);
             
             try
             {
                 userQueryDAO.create(uQuery);
+                response.setStatus(HttpServletResponse.SC_OK);
             }
             catch (Exception ex)
             {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-                message = "Error submitting your Query. Please try again.";
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            request.setAttribute("updateMessage", message);
-            userPath = "/contact";
+            return;
         }
 
         // use RequestDispatcher to forward request
@@ -522,5 +528,4 @@ public class ControllerServlet extends HttpServlet {
         String date2Str = new SimpleDateFormat("MM/dd/yyyy").format(date);
         return date1Str.equals(date2Str);
     }
-
 }

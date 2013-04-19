@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
@@ -34,13 +35,25 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "Booking.findByBookingTo", query = "SELECT b FROM Booking b WHERE b.bookingTo = :bookingTo"),
     @NamedQuery(name = "Booking.findByIsCancelled", query = "SELECT b FROM Booking b WHERE b.isCancelled = :isCancelled"),
     @NamedQuery(name = "Booking.findByBookingDateAndFacilityId", query = "SELECT b FROM Booking b INNER JOIN b.facilityInstanceId f WHERE b.bookingDate = :bookingDate AND f.id = :id AND b.isCancelled = FALSE"),
+    
     @NamedQuery(name = "Booking.findByCancellationDate", query = "SELECT b FROM Booking b WHERE b.cancellationDate = :cancellationDate"),
+    
     @NamedQuery(name = "Booking.findCurrentBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate >= :currentDate AND b.isCancelled = FALSE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND (b.bookingDate > :currentDate OR ( b.bookingDate = :currentDate AND b.bookingFrom >= :currentHour)) AND b.isCancelled = FALSE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+    
     @NamedQuery(name = "Booking.findPastBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.bookingDate < :currentDate AND b.isCancelled = FALSE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND (b.bookingDate < :currentDate OR (b.bookingDate = :currentDate AND b.bookingFrom < :currentHour)) AND b.isCancelled = FALSE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+    
     @NamedQuery(name = "Booking.findMyCanceledBookings", 
-        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.isCancelled = TRUE ORDER BY b.bookingDate DESC, b.bookingFrom DESC")})
+        query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE cid.id = :customerId AND b.isCancelled = TRUE ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+    
+    @NamedQuery(name = "Booking.checkBookingSlotForInstance", 
+        query = "SELECT b FROM Booking b JOIN b.facilityInstanceId fid WHERE fid.id = :fInstanceId AND b.isCancelled = FALSE AND b.bookingDate = :bookingDate AND b.bookingFrom = :bookingFrom ORDER BY b.bookingDate DESC, b.bookingFrom DESC"),
+    
+    @NamedQuery(name = "Booking.checkMultipleFacilitiesAtSameTime", 
+    query = "SELECT b FROM Booking b JOIN b.customerId cid WHERE b.isCancelled = FALSE AND b.bookingDate = :bookingDate AND b.bookingFrom = :bookingFrom AND cid.id = :customer_id")
+})
+
 public class Booking implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

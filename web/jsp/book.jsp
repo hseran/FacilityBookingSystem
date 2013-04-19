@@ -11,7 +11,7 @@
 %>
 
 <div>
-    <strong>Congrats facility has been booked. Following are the details:</strong>
+    <span class="label label-success">Success!!</span> <strong>Following are the details</strong>:
     <table class="table table-bordered table-hover">
         <tr><td><strong>Booking Id:</strong></td><td><%=booking.getId()%></td></tr>
         <tr><td><strong>Facility:</strong></td><td><%=booking.getFacilityInstanceId().getFacilityId().getName() + " " + booking.getFacilityInstanceId().getName()%></td></tr>

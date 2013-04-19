@@ -37,4 +37,10 @@ public interface BookingDAO {
     List<Booking> getPastBookings(int customerId);
 
     List<Booking> getCanceledBookings(int customerId);
+    
+    boolean checkSlotAvailability(int facilityInstanceId, int slot, Date bookingDate);
+    
+    boolean checkIfUserReachedBookingLimit(int userId, int facilityId, Date bookingDate);
+
+    boolean checkMultipleFacilitiesAtSameTime(int userId, int slot, Date bookingDate);
 }

@@ -25,6 +25,7 @@
     else
     {
 %>
+<b> Past Bookings</b>
 <table class="table table-bordered table-hover">
 		  <thead>
                       <tr>
@@ -42,7 +43,7 @@
         {
 %>
 <tr>
-    <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + booking.getFacilityInstanceId().getName() %></td>
+    <td><%= booking.getFacilityInstanceId().getFacilityId().getName() +" "+ booking.getFacilityInstanceId().getName() %></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
     <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>

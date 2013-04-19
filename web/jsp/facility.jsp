@@ -17,7 +17,6 @@
         %>
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span1"></div>
         <div class="span3">
         <h1><%=selFacility.getName() %></h1>
         
@@ -46,23 +45,22 @@
         </fieldset>
         </form>
     </div>
+    <div class="span1"></div>
     <div class="span5">
          <div id="booking-table">
          </div>
     </div>
-    <div class="span2">
-         <div id="booking-table">
-         </div>
+    <div class="span3">
     </div>
     </div>
 </div>
 <script type="text/javascript">
         $(document).ready(function() {
-            $("#datepicker").datepicker({minDate:0, maxDate:6});
+            $("#datepicker").datepicker({minDate:0, maxDate:3});
             $(".check-availability").click(checkAvailability);
             $("#view-form").validate();
         });
-        
+        //server-side date validation pending
         function checkAvailability()
         {
             var date = $.trim($("#datepicker").val());
@@ -72,7 +70,26 @@
                 $("#booking-table").html(data);
             });
         }
-        
+
+        function book()
+        {
+            alert("booking");
+            var selectedVal = "";
+            var selected = $("#slots-table input[type='radio']:checked");
+            if (selected.length > 0)
+            {
+                selectedValue = selected.val();
+            }
+            else
+            {
+                alert("Please select a slot for booking");    
+            }
+            $.post("book", {slot:selectedValue})
+            .done (function(data){
+                $("#booking-table").html(data);
+            });
+        }
+
 </script>
 
                         

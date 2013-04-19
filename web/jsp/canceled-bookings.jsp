@@ -19,12 +19,13 @@
     if (bookings == null || bookings.size() == 0)
     {
 %>
-<h2>You have do not have any Past Bookings</h2>
+<h2>You have not canceled any bookings</h2>
 <%
     }
     else
     {
 %>
+<b> Canceled Bookings</b>
 <table class="table table-bordered table-hover">
 		  <thead>
                       <tr>
@@ -32,6 +33,7 @@
                                 <th>Date Booked On</th>
 				<th>Date Booked For</th>
                                 <th>From - To</th>
+                                <th>Date of Cancellation</th>
 				<th>Status</th>
 			  </tr>
 			</thead>
@@ -42,10 +44,11 @@
         {
 %>
 <tr>
-    <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + booking.getFacilityInstanceId().getName() %></td>
-    <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
+    <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + " " + booking.getFacilityInstanceId().getName() %></td>
+    <td><%= new SimpleDateFormat("yyyy-MM-dd hh:mm a").format(booking.getCreatedDate())%></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
     <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>
+    <td><%= new SimpleDateFormat("yyyy-MM-dd hh:mm a").format(booking.getCancellationDate())%></td>
     <td><%= booking.getIsCancelled()?"CANCELLED":"-" %></td>
 </tr>
 

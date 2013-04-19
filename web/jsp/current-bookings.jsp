@@ -13,7 +13,7 @@
             <div class ="span3">
                 <%@include file="../WEB-INF/jspf/account-side-bar.jspf"%>
             </div>
-            <div class ="span7 booking-data">
+            <div class ="span8 booking-data">
 <%
     List<Booking> bookings = (List<Booking>)request.getAttribute("bookings");
     if (bookings == null || bookings.size() == 0)
@@ -25,6 +25,7 @@
     else
     {
 %>
+<b> Current Bookings</b>
 <table class="table table-bordered table-hover">
 		  <thead>
                       <tr>
@@ -42,12 +43,12 @@
         {
 %>
 <tr class="booking">
-    <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + booking.getFacilityInstanceId().getName() %></td>
+    <td><%= booking.getFacilityInstanceId().getFacilityId().getName() + " " + booking.getFacilityInstanceId().getName() %></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getCreatedDate())%></td>
     <td><%= new SimpleDateFormat("yyyy-MM-dd").format(booking.getBookingDate())%></td>
     <td><%= booking.getBookingFrom() + ":00 - " + booking.getBookingTo() +":00"%></td>
     <%System.out.println("4");%>
-    <td><%= booking.getIsCancelled()?"CANCELLED":"<a id='booking_" + booking.getId() + "' class='cancel' title='Cancel Booking'><i class='icon-trash'> </i></a>" %></td>
+    <td><%= booking.getIsCancelled()?"CANCELLED":"<a style='cursor:pointer' id='booking_" + booking.getId() + "' class='cancel' title='Cancel Booking'><i class='icon-trash'> </i></a> &nbsp;&nbsp;&nbsp; <a style='cursor:pointer' onClick='printBooking(" + booking.getId() +  ");' title='Print'><i class='icon-print'> </i></a>" %></td>
 </tr>
 
 <%
@@ -59,7 +60,7 @@
     }
 %>
         </div>
-        <div class="span2"></div>
+        <div class="span1"></div>
     </div>
 </div>
 
@@ -82,6 +83,11 @@
                 parent.closest('div.booking-data').html("<h2>You have do not have any Current Bookings</h2>")
             }
         });
+    }
+    
+    function printBooking(id)
+    {
+        window.open('booking-details?booking_id=' + id,'Booking Details','directories=no,titlebar=yes,toolbar=no,location=no,status=no,menubar=yes,scrollbars=no,resizable=no,width=400,height=300');
     }
             
     </script>

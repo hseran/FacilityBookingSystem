@@ -51,7 +51,8 @@ import javax.servlet.http.HttpSession;
     "/past-bookings",
     "/canceled-bookings",
     "/submit-query",
-    "/cancel-booking"
+    "/cancel-booking",
+    "/booking-details"
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -160,7 +161,18 @@ public class ControllerServlet extends HttpServlet {
             request.setAttribute("bookings", 
                     bookingDAO.getCanceledBookings(loggedInUser.getId()));
         }
-
+        else if (userPath.equals("/booking-details")){
+            /*
+             * clear the session variable & redirect to index.jsp
+             */
+            if (loggedInUser == null)
+            {
+                response.sendRedirect("index");
+                return;
+            }
+            int bookingId = Integer.parseInt(request.getParameter("booking_id"));
+            request.setAttribute("booking", bookingDAO.find(bookingId));
+        }
         // use RequestDispatcher to forward request
         String url = "jsp" + userPath + ".jsp";
         System.out.println(url);
@@ -227,6 +239,7 @@ public class ControllerServlet extends HttpServlet {
             int bookingId = Integer.parseInt(request.getParameter("booking_id"));
             Booking booking = bookingDAO.find(bookingId);
             booking.setIsCancelled(Boolean.TRUE);
+            booking.setCancellationDate(new Date());
             bookingDAO.edit(booking); 
             response.setStatus(HttpServletResponse.SC_OK);
             return;
@@ -237,21 +250,12 @@ public class ControllerServlet extends HttpServlet {
             
             String fid = request.getParameter("fid");
             int facid = Integer.parseInt(fid);
-            /*
-             * Facility Id 
-             *  0 - Badminton
-             *  1 - Squash
-             *  2 - Table tennis 
-             *  3 - Lawn tennis
-             */
+
             Facility selFacility = (Facility) session.getAttribute("selectedFacility");
 
-            /*
-             * Determine the instance id that the user is trying to book 
-             */
-            //int facility_instance_id = getIdFromMap(facid, facilityId);
             session.setAttribute("facility_instance_id", facid);
-
+            request.setAttribute("selectedInstance", facilityInstancesDAO.find(facid));
+            
             String[] status = new String[]{"Available", "Available", "Available", "Available", "Available",
                 "Available", "Available", "Available", "Available", "Available", "Available"};
             
@@ -291,17 +295,17 @@ public class ControllerServlet extends HttpServlet {
                         status[3] = "Unavailable";
                     } else if (startTime == 12) {
                         status[4] = "Unavailable";
-                    } else if (startTime == 1) {
+                    } else if (startTime == 13) {
                         status[5] = "Unavilable";
-                    } else if (startTime == 2) {
+                    } else if (startTime == 14) {
                         status[6] = "Unavailable";
-                    } else if (startTime == 3) {
+                    } else if (startTime == 15) {
                         status[7] = "Unavailable";
-                    } else if (startTime == 4) {
+                    } else if (startTime == 16) {
                         status[8] = "Unavailable";
-                    } else if (startTime == 5) {
+                    } else if (startTime == 17) {
                         status[9] = "Unavailable";
-                    } else if (startTime == 6) {
+                    } else if (startTime == 18) {
                         status[10] = "Unavailable";
                     }
                 }
@@ -320,7 +324,7 @@ public class ControllerServlet extends HttpServlet {
 
 
             facility_instance_id = (Integer) session.getAttribute("facility_instance_id");
-            String[] checkedIds = request.getParameterValues("slot");
+            String checkedId = request.getParameter("slot");
 
             FacilityInstances f = facilityInstancesDAO.find(facility_instance_id);
 
@@ -333,28 +337,15 @@ public class ControllerServlet extends HttpServlet {
             Date convertedDate = (Date)session.getAttribute("selectdate");
             b.setBookingDate(convertedDate);
 
-            for (int i = 0; i < checkedIds.length; i++) {
-                val = checkedIds[i];
-                value = Integer.parseInt(val);
-                if (value < 5) {
-
-                    b.setBookingFrom(value + 8);
-                    b.setBookingTo(value + 9);
-                    try {
-                        bookingDAO.create(b);
-                    } catch (Exception e) {
-                        System.out.println("Exception seen " + e.getMessage());
-                    }
-                } else if (value >= 5) {
-
-                    b.setBookingFrom(value - 4);
-                    b.setBookingTo(value - 3);
-                    try {
-                        bookingDAO.create(b);
-                    } catch (Exception e) {
-                        System.out.println("Exception seen " + e.getMessage());
-                    }
-                }
+            value = Integer.parseInt(checkedId);
+            b.setBookingFrom(value);
+            b.setBookingTo(value + 1);
+            try {
+                bookingDAO.create(b);
+                request.setAttribute("booking", b);
+            } catch (Exception e) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, e);
+                throw new ServletException(e);
             }
         } else if (userPath.equals("/login")) {
             /*

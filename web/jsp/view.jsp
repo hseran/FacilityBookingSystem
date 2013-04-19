@@ -4,6 +4,8 @@
     Author     : blue
 --%>
 
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="entity.FacilityInstances"%>
 <%@page import="entity.Customer"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.util.Iterator"%>
@@ -12,15 +14,18 @@
     Iterator iterator;
     String key;
     String obj;
-    String arr[] = new String[]{"8 am - 9 am", "9 am - 10 am", "10 am - 11 am", "11 am - 12 am",
-        "12 am - 1 pm", "1 pm - 2 pm", "2 pm - 3 pm", "3 pm - 4 pm ", "4 pm - 5 pm", "5 pm - 6 pm", "6 pm - 7 pm"};
+    String arr[] = new String[]{"08 Hrs - 09 Hrs", "09 Hrs - 10 Hrs", "10 Hrs - 11 Hrs", "11 Hrs - 12 Hrs",
+        "12 Hrs - 13 Hrs", "13 Hrs - 14 Hrs", "14 Hrs - 15 Hrs", "15 Hrs - 16 Hrs", "16 Hrs - 17 Hrs", "17 Hrs - 18 Hrs", "18 Hrs - 19 Hrs"};
 %>
 <%
     Customer loggedInUser = (Customer)session.getAttribute("customer");
+    FacilityInstances ins = (FacilityInstances) request.getAttribute("selectedInstance");
+    Date sdate = (Date) session.getAttribute("selectdate");
 %>
 <div style="text-align: center;">
-    <form  action="book" method="post">
-        <table id ="testTable"  class="text-center table table-bordered " width="30%">
+    <b>Availability for <%= ins.getFacilityId().getName() + " " + ins.getName() %> on <%=new SimpleDateFormat("yyyy-MM-dd").format(sdate)%></b><br/>
+    <form>
+        <table id ="slots-table"  class="text-center table table-bordered " width="30%">
             <tr class="success">
                 <th>Slot</th>
                 <th>Status</th>
@@ -44,11 +49,11 @@
                 <td><%=status[i]%></td>
                 <%if (loggedInUser != null){%>
                 <%if (isToday && (i + 8) <= hour){%>
-                    <td> <input type="checkbox" name="slot" value=<%=i%> disabled> UnAvailable </td>
+                <td style="background-color: #ff9999"> <input class="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> disabled> UnAvailable </td>
                 <%} else if (status[i].equals("Available")) {%>
-                <td> <input type="checkbox" name="slot" value=<%=i%> > Book Slot </td>
+                    <td style="background-color: #ccffcc"> <input class="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> > Book Slot </td>
                     <% } else {%>
-                <td><input type="checkbox" checked name="slot" value=<%=i%> disabled >Unavailable</td>
+                <td style="background-color: #ff9999"><input class ="booking-slot" type="radio" name="slot" value=<%=(i + 8)%> disabled >Unavailable</td>
                     <%
                     }
                 }
@@ -59,7 +64,7 @@
             %>
         </table>
         <%if (loggedInUser != null){%>
-        <button type="submit" class="btn btn-success btn-large">Make booking </button>
+        <button type="button" class="btn btn-success btn-large make-booking" onclick="book();">Make booking </button>
         <%}else{%>
         <h1>Please login to proceed to booking</h1>
         <%}%>

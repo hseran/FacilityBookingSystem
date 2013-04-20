@@ -18,7 +18,7 @@
     <%
     }
     %>
-        <form action="register" method="POST" id="signupform" class="form-horizontal" onsubmit="return validateLogin();">
+    <form action="register" method="POST" id="signupform" class="form-horizontal" onsubmit="return validateLogin();">
         <fieldset>
           <legend>Register Here</legend>
             <div class="control-group">

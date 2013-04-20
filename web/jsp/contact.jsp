@@ -34,19 +34,21 @@
         <div class="control-group">
           <label class="control-label" for="name">Name *</label>
           <div class="controls">
-            <input type="text" class="input-xlarge required" id="name" name="name" id="address1">
+              <input type="text" class="input-xlarge required" id="name" name="name"  value='<%=loggedInUser == null? "": loggedInUser.getName()%>'>
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="phone">Contact Number *</label>
           <div class="controls">
-            <input type="text" class="input-xlarge required tel" id="phone" name="phone" id="address1">
+            <input type="text" class="input-xlarge required tel" id="phone" name="phone"  
+                   value='<%=loggedInUser == null? "": loggedInUser.getPhone()%>'>
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="email">Email *</label>
           <div class="controls">
-            <input type="text" class="input-xlarge required email" id="email" name="email" id="address1">
+            <input type="text" class="input-xlarge required email" id="email" name="email" value='<%=loggedInUser == null? "": 
+                    loggedInUser.getEmail()%>'>
           </div>
         </div>
         <div class="control-group">

@@ -22,14 +22,6 @@
               <br/>
           </div>
           </div>
-            <%
-              /*
-               * If user is not logged in, he might be a registered user, so 
-               * display link to register
-               */
-              if (loggedInUser == null)
-              {
-            %>
           <div class="span4">
             <div class="carousel slide" id="myCarousel">
                 <ol class="carousel-indicators">
@@ -68,7 +60,6 @@
                 <a data-slide="next" href="#myCarousel" class="right carousel-control">&rsaquo;</a>
               </div>
           </div> <!--/row-->
-                        <%}%>
         </div><!--/span-->
       </div><!--/row-->
 <%@include file="../WEB-INF/jspf/footer.jspf"%>

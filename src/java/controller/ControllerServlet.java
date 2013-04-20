@@ -38,7 +38,7 @@ import javax.servlet.http.HttpSession;
         urlPatterns = {
     "/index",
     "/facility",
-    "/checkIDAvailabilty",
+    "/checkIDAvailablility",
     "/register",
     "/login",
     "/logout",
@@ -227,7 +227,20 @@ public class ControllerServlet extends HttpServlet {
             bookingDAO.edit(booking); 
             response.setStatus(HttpServletResponse.SC_OK);
             return;
-        }else if (userPath.equals("/view")) {
+        }else if (userPath.equals("/checkIDAvailablility")) {
+            /*
+             * we check is the login ID is already in use by someone else
+             */
+            String login = request.getParameter("login");
+            System.out.println(login);
+            System.out.println("checking availability " + login);
+            boolean available = customerDAO.isLoginIDAvailable(login);
+            response.setContentType("text/plain");
+            PrintWriter writer = response.getWriter();
+            writer.print(available);
+            return;
+        }
+        else if (userPath.equals("/view")) {
 
             List<Booking> l = null;
             String date = request.getParameter("datepicker");
@@ -366,25 +379,14 @@ public class ControllerServlet extends HttpServlet {
              */
             if (customer != null) {
                 session.setAttribute("customer", customer);
+                response.sendRedirect("account");
+                return;
             } else {
                 session.setAttribute("errorMessage", "Login Failed");
-            }
-
-            /*
-             * if user was forced to login while going to some other page,
-             * direct him to that page after he logs in
-             */
-            String path = (String) (session.getAttribute("page") == null ? "" : session.getAttribute("page"));
-            path = request.getContextPath() + path;
-
-            if (path != null && !path.isEmpty()) {
-                session.removeAttribute("page");
-                response.sendRedirect(path);
-                return;
-            } else {
-                response.sendRedirect("index.jsp");
+                response.sendRedirect("index");
                 return;
             }
+            
         } else if (userPath.equals("/editProfile")) {
             /*
              * If user is not logged-in yet, re-direct to index page 
@@ -403,18 +405,7 @@ public class ControllerServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (userPath.equals("/checkIDAvailablility")) {
-            /*
-             * we check is the login ID is already in use by someone else
-             */
-            String login = request.getParameter("login");
-            System.out.println("checking availability " + login);
-            boolean available = customerDAO.isLoginIDAvailable(login);
-            response.setContentType("text/plain");
-            PrintWriter writer = response.getWriter();
-            writer.print(available);
-            return;
-        }
+        } 
         else if (userPath.equals("/submit-query"))
         {
             String name = request.getParameter("name");
